@@ -6,13 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, User, Users, Lock, AlertTriangle, Activity, Database } from "lucide-react";
+import { Shield, User, Users, Lock, AlertTriangle, Activity } from "lucide-react";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
+
+const passwordSchema = z.string()
+  .min(8, "Password must be at least 8 characters");
 
 const loginSchema = z.object({
-  userId: z.string().min(1, "User ID is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  userId: z.string().min(1, "User ID is required").max(50, "User ID too long"),
+  password: passwordSchema,
   role: z.enum(["worker", "supervisor", "admin"]),
 });
 
@@ -23,47 +25,17 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<AppRole>("worker");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSeeding, setIsSeeding] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSeedData = async () => {
-    setIsSeeding(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("seed-demo-data");
-      
-      if (error) throw error;
-      
-      toast({
-        title: "Demo Data Created!",
-        description: (
-          <div className="text-xs space-y-1 mt-2">
-            <p><strong>Admin:</strong> admin001 / admin123</p>
-            <p><strong>Supervisors:</strong> sup001, sup002 / super123</p>
-            <p><strong>Workers:</strong> wrk001-wrk004 / worker123</p>
-          </div>
-        ),
-      });
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to seed data";
-      toast({
-        variant: "destructive",
-        title: "Seeding Failed",
-        description: message,
-      });
-    } finally {
-      setIsSeeding(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
 
-    const validation = loginSchema.safeParse({ userId, password, role });
+    const validation = loginSchema.safeParse({ userId: userId.trim(), password, role });
     
     if (!validation.success) {
       const fieldErrors: Record<string, string> = {};
@@ -79,13 +51,13 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await signIn(userId, password, role);
+      const { error } = await signIn(userId.trim(), password, role);
 
       if (error) {
         toast({
           variant: "destructive",
           title: "Authentication Failed",
-          description: error.message || "Invalid credentials. Please try again.",
+          description: "Invalid credentials. Please try again.",
         });
         setIsLoading(false);
         return;
@@ -103,7 +75,7 @@ const Login = () => {
       };
 
       navigate(dashboardRoutes[role]);
-    } catch (err) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Error",
@@ -160,6 +132,7 @@ const Login = () => {
                   placeholder="Enter your User ID"
                   value={userId}
                   onChange={(e) => setUserId(e.target.value)}
+                  maxLength={50}
                   className="pl-10 bg-secondary/50 border-border focus:border-primary"
                 />
               </div>
@@ -241,29 +214,6 @@ const Login = () => {
               )}
             </Button>
           </form>
-        </div>
-
-        {/* Seed Demo Data Button */}
-        <div className="text-center mt-4 animate-fade-in" style={{ animationDelay: "0.15s" }}>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleSeedData}
-            disabled={isSeeding}
-            className="gap-2 border-primary/30 text-primary hover:bg-primary/10"
-          >
-            {isSeeding ? (
-              <>
-                <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-                Creating Demo Data...
-              </>
-            ) : (
-              <>
-                <Database className="w-4 h-4" />
-                Initialize Demo Data
-              </>
-            )}
-          </Button>
         </div>
 
         {/* Footer */}
