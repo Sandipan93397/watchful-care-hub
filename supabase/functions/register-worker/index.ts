@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Verify the requesting user is an admin
+    // Verify the requesting user
     const userClient = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
       auth: { autoRefreshToken: false, persistSession: false },
@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Check if user has admin role using service client
+    // Check user role using service client
     const adminClient = createClient(supabaseUrl, serviceRoleKey, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
@@ -60,10 +60,21 @@ Deno.serve(async (req) => {
       .eq("user_id", user.id)
       .single();
 
-    if (roleError || roleData?.role !== "admin") {
-      console.error("Role check failed:", roleError || "Not admin");
+    if (roleError) {
+      console.error("Role check failed:", roleError);
       return new Response(
-        JSON.stringify({ error: "Forbidden: Admin access required" }),
+        JSON.stringify({ error: "Failed to verify user role" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userRole = roleData?.role;
+    const isAdmin = userRole === "admin";
+    const isSupervisor = userRole === "supervisor";
+
+    if (!isAdmin && !isSupervisor) {
+      return new Response(
+        JSON.stringify({ error: "Forbidden: Admin or Supervisor access required" }),
         { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -97,6 +108,26 @@ Deno.serve(async (req) => {
       );
     }
 
+    // If supervisor, get their supervisor record ID and force assignment to themselves
+    let supervisorId = body.supervisor_id;
+    if (isSupervisor) {
+      const { data: supervisorData, error: supervisorError } = await adminClient
+        .from("supervisors")
+        .select("id")
+        .eq("user_id", user.id)
+        .single();
+
+      if (supervisorError || !supervisorData) {
+        console.error("Supervisor lookup failed:", supervisorError);
+        return new Response(
+          JSON.stringify({ error: "Could not find supervisor record" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      // Force workers registered by supervisors to be assigned to that supervisor
+      supervisorId = supervisorData.id;
+    }
+
     // Create the worker user with service role
     const email = `${body.worker_id.toLowerCase()}@safetysystem.local`;
     
@@ -128,7 +159,6 @@ Deno.serve(async (req) => {
 
     if (roleInsertError) {
       console.error("Role insert error:", roleInsertError);
-      // Try to clean up the created user
       await adminClient.auth.admin.deleteUser(authData.user.id);
       return new Response(
         JSON.stringify({ error: "Failed to assign role" }),
@@ -143,13 +173,12 @@ Deno.serve(async (req) => {
       name: body.name,
       age: body.age,
       health_issues: body.health_issues || "none",
-      supervisor_id: body.supervisor_id || null,
+      supervisor_id: supervisorId || null,
       device_id: body.device_id || null,
     });
 
     if (workerError) {
       console.error("Worker insert error:", workerError);
-      // Clean up
       await adminClient.auth.admin.deleteUser(authData.user.id);
       return new Response(
         JSON.stringify({ error: "Failed to create worker record" }),
@@ -157,7 +186,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`Worker ${body.worker_id} registered successfully by admin ${user.id}`);
+    console.log(`Worker ${body.worker_id} registered successfully by ${userRole} ${user.id}`);
 
     return new Response(
       JSON.stringify({ 

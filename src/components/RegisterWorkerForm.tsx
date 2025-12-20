@@ -25,12 +25,18 @@ const schema = z.object({
 });
 
 interface RegisterWorkerFormProps {
-  supervisors: { id: string; name: string }[];
+  supervisors?: { id: string; name: string }[];
   onClose: () => void;
   onSuccess: () => void;
+  isSupervisorMode?: boolean;
 }
 
-const RegisterWorkerForm: React.FC<RegisterWorkerFormProps> = ({ supervisors, onClose, onSuccess }) => {
+const RegisterWorkerForm: React.FC<RegisterWorkerFormProps> = ({ 
+  supervisors = [], 
+  onClose, 
+  onSuccess,
+  isSupervisorMode = false 
+}) => {
   const [form, setForm] = useState({ worker_id: "", name: "", age: "", health_issues: "none", supervisor_id: "", device_id: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -73,7 +79,7 @@ const RegisterWorkerForm: React.FC<RegisterWorkerFormProps> = ({ supervisors, on
           name: form.name.trim(),
           age: parseInt(form.age),
           health_issues: form.health_issues.trim() || "none",
-          supervisor_id: form.supervisor_id || null,
+          supervisor_id: isSupervisorMode ? null : (form.supervisor_id || null),
           device_id: form.device_id.trim() || null,
           password: form.password,
         },
@@ -94,7 +100,7 @@ const RegisterWorkerForm: React.FC<RegisterWorkerFormProps> = ({ supervisors, on
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="industrial-card border-border max-w-md">
+      <DialogContent className="arch-card border-border max-w-md">
         <DialogHeader>
           <DialogTitle>Register New Worker</DialogTitle>
         </DialogHeader>
@@ -153,13 +159,20 @@ const RegisterWorkerForm: React.FC<RegisterWorkerFormProps> = ({ supervisors, on
             />
             {errors.health_issues && <p className="text-xs text-emergency mt-1">{errors.health_issues}</p>}
           </div>
-          <div>
-            <Label>Supervisor</Label>
-            <Select value={form.supervisor_id} onValueChange={(v) => setForm({ ...form, supervisor_id: v })}>
-              <SelectTrigger><SelectValue placeholder="Select supervisor" /></SelectTrigger>
-              <SelectContent>{supervisors.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
-            </Select>
-          </div>
+          {!isSupervisorMode && supervisors.length > 0 && (
+            <div>
+              <Label>Supervisor</Label>
+              <Select value={form.supervisor_id} onValueChange={(v) => setForm({ ...form, supervisor_id: v })}>
+                <SelectTrigger><SelectValue placeholder="Select supervisor" /></SelectTrigger>
+                <SelectContent className="bg-card border-border">{supervisors.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+          )}
+          {isSupervisorMode && (
+            <p className="text-sm text-muted-foreground bg-secondary/30 p-3 rounded-lg">
+              This worker will be automatically assigned to you.
+            </p>
+          )}
           <div>
             <Label>Password</Label>
             <Input 
