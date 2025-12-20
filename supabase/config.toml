@@ -1,1 +1,7 @@
 project_id = "msrggogmhafhstbhovqi"
+
+[functions.register-worker]
+verify_jwt = true
+
+[functions.submit-sensor-data]
+verify_jwt = false
