@@ -14,55 +14,13 @@ import {
   CheckCircle,
   AlertCircle,
   Settings,
-  Database,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 
 const AdminDashboard = () => {
   const { workers, supervisors, isLoading, refetch } = useAdminData();
   const [selectedWorkerId, setSelectedWorkerId] = useState<string | null>(null);
   const [showRegisterForm, setShowRegisterForm] = useState(false);
-  const [isSeeding, setIsSeeding] = useState(false);
-  const [seedResult, setSeedResult] = useState<{
-    supervisors: { userId: string; password: string; name: string }[];
-    workers: { userId: string; password: string; name: string }[];
-  } | null>(null);
-  const { toast } = useToast();
-
-  const handleSeedData = async () => {
-    setIsSeeding(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("seed-demo-data");
-      
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-      
-      setSeedResult(data.credentials);
-      toast({
-        title: "Demo Data Created!",
-        description: "Check the dialog for generated credentials.",
-      });
-      refetch();
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to seed data";
-      toast({
-        variant: "destructive",
-        title: "Seeding Failed",
-        description: message,
-      });
-    } finally {
-      setIsSeeding(false);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -168,33 +126,13 @@ const AdminDashboard = () => {
             </TabsTrigger>
           </TabsList>
 
-          <div className="flex gap-2">
-            <Button
-              onClick={handleSeedData}
-              variant="outline"
-              disabled={isSeeding}
-              className="border-primary/30 hover:bg-primary/10"
-            >
-              {isSeeding ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin mr-2" />
-                  Seeding...
-                </>
-              ) : (
-                <>
-                  <Database className="w-4 h-4 mr-2" />
-                  Add Demo Users
-                </>
-              )}
-            </Button>
-            <Button
-              onClick={() => setShowRegisterForm(true)}
-              className="bg-primary hover:bg-primary/90 rounded-t-xl rounded-b-lg"
-            >
-              <UserPlus className="w-4 h-4 mr-2" />
-              Register Worker
-            </Button>
-          </div>
+          <Button
+            onClick={() => setShowRegisterForm(true)}
+            className="bg-primary hover:bg-primary/90 rounded-t-xl rounded-b-lg"
+          >
+            <UserPlus className="w-4 h-4 mr-2" />
+            Register Worker
+          </Button>
         </div>
 
         <TabsContent value="workers" className="mt-6">
@@ -216,17 +154,11 @@ const AdminDashboard = () => {
                 <Users className="w-10 h-10 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">No Workers Registered</h3>
-              <p className="text-muted-foreground mb-4">Click "Register Worker" or "Add Demo Users" to get started.</p>
-              <div className="flex gap-3 justify-center">
-                <Button onClick={handleSeedData} variant="outline" disabled={isSeeding}>
-                  <Database className="w-4 h-4 mr-2" />
-                  Add Demo Users
-                </Button>
-                <Button onClick={() => setShowRegisterForm(true)}>
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  Register Worker
-                </Button>
-              </div>
+              <p className="text-muted-foreground mb-4">Click "Register Worker" to get started.</p>
+              <Button onClick={() => setShowRegisterForm(true)}>
+                <UserPlus className="w-4 h-4 mr-2" />
+                Register Worker
+              </Button>
             </div>
           )}
         </TabsContent>
@@ -260,11 +192,7 @@ const AdminDashboard = () => {
                 <Shield className="w-10 h-10 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">No Supervisors</h3>
-              <p className="text-muted-foreground mb-4">Add demo users to create sample supervisors.</p>
-              <Button onClick={handleSeedData} variant="outline" disabled={isSeeding}>
-                <Database className="w-4 h-4 mr-2" />
-                Add Demo Users
-              </Button>
+              <p className="text-muted-foreground">Supervisors will appear here once registered.</p>
             </div>
           )}
         </TabsContent>
@@ -272,17 +200,9 @@ const AdminDashboard = () => {
         <TabsContent value="settings" className="mt-6">
           <div className="arch-card p-6">
             <h3 className="text-lg font-semibold text-foreground mb-4">System Settings</h3>
-            <div className="space-y-4">
-              <div className="p-4 rounded-lg bg-secondary/30 border border-border">
-                <h4 className="font-medium text-foreground mb-2">Demo Data Management</h4>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Initialize the system with sample supervisors, workers, and sensor data for testing.
-                </p>
-                <Button onClick={handleSeedData} variant="outline" disabled={isSeeding}>
-                  {isSeeding ? "Creating..." : "Create Demo Data"}
-                </Button>
-              </div>
-            </div>
+            <p className="text-muted-foreground">
+              System configuration options will be available here.
+            </p>
           </div>
         </TabsContent>
       </Tabs>
@@ -306,49 +226,6 @@ const AdminDashboard = () => {
           }}
         />
       )}
-
-      {/* Seed Result Dialog */}
-      <Dialog open={!!seedResult} onOpenChange={() => setSeedResult(null)}>
-        <DialogContent className="arch-card border-border max-w-lg max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-safe" />
-              Demo Users Created
-            </DialogTitle>
-            <DialogDescription>
-              Save these credentials securely. Passwords are randomly generated.
-            </DialogDescription>
-          </DialogHeader>
-          {seedResult && (
-            <div className="space-y-4 mt-4">
-              <div>
-                <h4 className="font-semibold text-foreground mb-2">Supervisors</h4>
-                <div className="space-y-2">
-                  {seedResult.supervisors.map((s) => (
-                    <div key={s.userId} className="p-3 rounded-lg bg-secondary/50 border border-border text-sm font-mono">
-                      <p className="text-foreground">{s.name}</p>
-                      <p className="text-muted-foreground">ID: {s.userId}</p>
-                      <p className="text-primary">Pass: {s.password}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h4 className="font-semibold text-foreground mb-2">Workers</h4>
-                <div className="space-y-2">
-                  {seedResult.workers.map((w) => (
-                    <div key={w.userId} className="p-3 rounded-lg bg-secondary/50 border border-border text-sm font-mono">
-                      <p className="text-foreground">{w.name}</p>
-                      <p className="text-muted-foreground">ID: {w.userId}</p>
-                      <p className="text-primary">Pass: {w.password}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </DashboardLayout>
   );
 };
