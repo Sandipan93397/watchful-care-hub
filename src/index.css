@@ -143,6 +143,49 @@
     background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.4), transparent);
   }
 
+  /* Arch-styled Card */
+  .arch-card {
+    @apply relative overflow-hidden border border-border bg-card;
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-md);
+    border-radius: 1rem 1rem 0.5rem 0.5rem;
+  }
+
+  .arch-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.5), transparent);
+    border-radius: 1rem 1rem 0 0;
+  }
+
+  .arch-card-header {
+    @apply flex items-center justify-center;
+  }
+
+  /* Decorative arch frames */
+  .arch-frame {
+    border: 2px solid hsl(var(--primary) / 0.1);
+    border-radius: 50% 50% 0 0;
+    border-bottom: none;
+  }
+
+  .arch-frame-inner {
+    border: 1px solid hsl(var(--primary) / 0.15);
+    border-radius: 50% 50% 0 0;
+    border-bottom: none;
+  }
+
+  .arch-small {
+    border: 1px solid hsl(var(--primary) / 0.08);
+    border-radius: 50% 50% 0 0;
+    border-bottom: none;
+    opacity: 0.5;
+  }
+
   /* Status Indicator Animations */
   .status-pulse {
     animation: status-pulse 2s ease-in-out infinite;
@@ -190,9 +233,9 @@
     @apply text-xs uppercase tracking-wider text-muted-foreground;
   }
 
-  /* Sensor Card */
+  /* Sensor Card with arch top */
   .sensor-card {
-    @apply industrial-card p-4 transition-all duration-300;
+    @apply arch-card p-4 transition-all duration-300;
   }
 
   .sensor-card:hover {
