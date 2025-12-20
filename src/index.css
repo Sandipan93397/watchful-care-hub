@@ -6,89 +6,94 @@
 
 @layer base {
   :root {
-    /* Industrial Dark Theme */
-    --background: 220 20% 10%;
-    --foreground: 210 20% 95%;
+    /* Elegant Teal/Navy Theme from palette */
+    /* #011425 - Deep Navy Background */
+    --background: 207 95% 7%;
+    /* #FFFFFF - White text */
+    --foreground: 0 0% 100%;
 
-    --card: 220 18% 13%;
-    --card-foreground: 210 20% 95%;
+    /* #1F4959 - Darker teal for cards */
+    --card: 196 49% 24%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 220 18% 13%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 196 49% 24%;
+    --popover-foreground: 0 0% 100%;
 
-    /* Industrial Blue Primary */
-    --primary: 210 100% 50%;
-    --primary-foreground: 210 20% 98%;
+    /* #5C7C89 - Teal/Blue-gray Primary */
+    --primary: 194 20% 45%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Steel Gray Secondary */
-    --secondary: 220 15% 20%;
-    --secondary-foreground: 210 20% 90%;
+    /* #1F4959 - Darker teal Secondary */
+    --secondary: 196 49% 24%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 220 15% 18%;
-    --muted-foreground: 215 15% 55%;
+    /* #242424 - Dark gray for muted */
+    --muted: 196 49% 20%;
+    --muted-foreground: 194 15% 65%;
 
-    /* Accent - Cyan Industrial */
-    --accent: 185 100% 40%;
-    --accent-foreground: 210 20% 98%;
+    /* #5C7C89 - Teal accent */
+    --accent: 194 20% 45%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
-    --destructive-foreground: 210 20% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 22%;
-    --input: 220 15% 18%;
-    --ring: 210 100% 50%;
+    /* Border colors */
+    --border: 196 30% 30%;
+    --input: 196 49% 20%;
+    --ring: 194 20% 45%;
 
     --radius: 0.5rem;
 
     /* Safety Status Colors */
     --safe: 142 76% 36%;
-    --safe-foreground: 142 76% 98%;
+    --safe-foreground: 0 0% 100%;
     --safe-glow: 142 76% 36%;
     
     --warning: 45 93% 47%;
-    --warning-foreground: 45 93% 10%;
+    --warning-foreground: 0 0% 10%;
     --warning-glow: 45 93% 47%;
     
     --emergency: 0 84% 60%;
-    --emergency-foreground: 0 84% 98%;
+    --emergency-foreground: 0 0% 100%;
     --emergency-glow: 0 84% 60%;
 
-    /* Industrial Accents */
-    --industrial-steel: 220 10% 40%;
-    --industrial-dark: 220 20% 8%;
-    --industrial-border: 220 15% 25%;
-    --industrial-glow: 210 100% 50%;
+    /* Industrial Accents using new palette */
+    --industrial-steel: 194 20% 45%;
+    --industrial-dark: 207 95% 5%;
+    --industrial-border: 196 30% 28%;
+    --industrial-glow: 194 20% 45%;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(210 100% 50%), hsl(185 100% 40%));
-    --gradient-dark: linear-gradient(180deg, hsl(220 20% 12%), hsl(220 20% 8%));
-    --gradient-card: linear-gradient(145deg, hsl(220 18% 15%), hsl(220 18% 11%));
+    /* Gradients using new palette */
+    --gradient-primary: linear-gradient(135deg, hsl(194 20% 45%), hsl(196 49% 24%));
+    --gradient-dark: linear-gradient(180deg, hsl(207 95% 10%), hsl(207 95% 5%));
+    --gradient-card: linear-gradient(145deg, hsl(196 49% 28%), hsl(196 49% 20%));
     --gradient-safe: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 28%));
     --gradient-warning: linear-gradient(135deg, hsl(45 93% 47%), hsl(35 93% 40%));
     --gradient-emergency: linear-gradient(135deg, hsl(0 84% 60%), hsl(0 84% 45%));
 
     /* Shadows */
-    --shadow-sm: 0 2px 8px -2px hsl(220 20% 5% / 0.5);
-    --shadow-md: 0 4px 16px -4px hsl(220 20% 5% / 0.6);
-    --shadow-lg: 0 8px 32px -8px hsl(220 20% 5% / 0.7);
-    --shadow-glow: 0 0 20px hsl(210 100% 50% / 0.3);
+    --shadow-sm: 0 2px 8px -2px hsl(207 95% 3% / 0.5);
+    --shadow-md: 0 4px 16px -4px hsl(207 95% 3% / 0.6);
+    --shadow-lg: 0 8px 32px -8px hsl(207 95% 3% / 0.7);
+    --shadow-glow: 0 0 20px hsl(194 20% 45% / 0.3);
     --shadow-safe-glow: 0 0 20px hsl(142 76% 36% / 0.4);
     --shadow-warning-glow: 0 0 20px hsl(45 93% 47% / 0.4);
     --shadow-emergency-glow: 0 0 20px hsl(0 84% 60% / 0.5);
 
-    --sidebar-background: 220 20% 8%;
-    --sidebar-foreground: 210 20% 90%;
-    --sidebar-primary: 210 100% 50%;
-    --sidebar-primary-foreground: 210 20% 98%;
-    --sidebar-accent: 220 15% 15%;
-    --sidebar-accent-foreground: 210 20% 90%;
-    --sidebar-border: 220 15% 20%;
-    --sidebar-ring: 210 100% 50%;
+    --sidebar-background: 207 95% 5%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 194 20% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 196 49% 20%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 196 30% 25%;
+    --sidebar-ring: 194 20% 45%;
   }
 
   .dark {
-    --background: 220 20% 10%;
-    --foreground: 210 20% 95%;
+    --background: 207 95% 7%;
+    --foreground: 0 0% 100%;
   }
 }
 
@@ -104,7 +109,7 @@
     min-height: 100vh;
   }
 
-  /* Industrial Background Pattern */
+  /* Subtle Background Pattern */
   body::before {
     content: '';
     position: fixed;
@@ -113,8 +118,8 @@
     right: 0;
     bottom: 0;
     background-image: 
-      radial-gradient(circle at 25% 25%, hsl(210 100% 50% / 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 75% 75%, hsl(185 100% 40% / 0.03) 0%, transparent 50%);
+      radial-gradient(circle at 25% 25%, hsl(194 20% 45% / 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, hsl(196 49% 24% / 0.05) 0%, transparent 50%);
     pointer-events: none;
     z-index: -1;
   }
@@ -135,7 +140,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.3), transparent);
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.4), transparent);
   }
 
   /* Status Indicator Animations */
@@ -198,8 +203,8 @@
   /* Grid Overlay Pattern */
   .grid-pattern {
     background-image: 
-      linear-gradient(hsl(var(--border) / 0.3) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--border) / 0.3) 1px, transparent 1px);
+      linear-gradient(hsl(var(--border) / 0.2) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.2) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 
