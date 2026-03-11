@@ -6,7 +6,7 @@ import BackgroundMusic from "@/components/BackgroundMusic";
 const Index = () => {
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Background Pattern */}
+      <BackgroundMusic />
       <div className="fixed inset-0 grid-pattern opacity-20" />
       
       {/* Decorative Arch Elements */}
