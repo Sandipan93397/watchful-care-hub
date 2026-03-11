@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Activity, Shield, Users, User, ArrowRight, Heart, Thermometer, Wind, AlertTriangle } from "lucide-react";
+import BackgroundMusic from "@/components/BackgroundMusic";
 
 const Index = () => {
   return (
